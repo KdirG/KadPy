@@ -1,0 +1,61 @@
+# utils.py
+import time
+
+#measuring time
+def timeit(func):
+    def wrapper(*args, **kwargs):
+        start = time.time()                      # Taking the start time
+        result = func(*args, **kwargs)           # Calling the prime function
+        end = time.time()                        # Taking the finish time
+        print(f"{func.__name__} took {end - start:.6f}s")  # Printing the time
+        return result                            # Returning the result back
+    return  wrapper #when we need wrapping this function  to the another function example=>time(home())
+    
+#error calculation    
+def relative_error(approx, exact): #defining and returning relative error #TEKRAR BAK 0/0 GİBİ DURUMLAR İÇİN
+    try:
+    return abs((approx - exact) / exact)
+except ZeroDivisionError:
+    return float('inf')
+
+def absolute_error(approx, exact): #defining and returning absolute error 
+    return abs(approx - exact)
+
+#convergence check
+def has_converged(old_val, new_val, tol=1e-6):
+    return abs(new_val - old_val) < tol
+
+#benchmark supporter => for gpu vs cpu comparation
+def benchmark(method, *args, repeats=5, **kwargs): #method=> function to measure *args=>positional argument which we send to the function example=>sum(arr) arr in there repeats=>how many measurements we need **kwargs=>keyword arguments which we send to the function
+    durations = [] #times added to the durations list 
+    for _ in range(repeats): #repeat as much as repeats count
+        start = time.perf_counter() #saving the start time
+        method(*args, **kwargs) #running the function
+        durations.append(time.perf_counter()  - start) 
+    avg_time = sum(durations) / repeats #calculating time average time
+    return avg_time #returning the average time
+
+#numpy-cupy converter=> when we need a convertion for an array between numpy and cupy
+def to_gpu_array(arr): 
+    try:
+        import cupy as cp #looking for are we have cupy library
+        return cp.array(arr) #numpy to cupy
+    except ImportError: #if cupy library isnt imported 
+        return arr #return converted cupy array
+
+def to_cpu_array(arr):
+    try:
+        return arr.get()  # cupy to numpy
+    except AttributeError: #if we dont have a cupy array which we need to convert
+        return arr #return converted numpy array
+
+
+#converting functions to a String
+def compile_function_from_string(func_str, var='x'): #
+    return lambda x: eval(func_str, {var: x})
+
+    
+
+
+
+
