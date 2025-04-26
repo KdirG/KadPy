@@ -6,6 +6,6 @@ from .differentiation import compute_derivative,forward_diff,backward_diff,centr
 from .optimization import gradient_descent
 from .root_finding import bisection,newton_raphson
 from .interpolation import linear_interpolation,spline_interpolation
-from .ode_solver import solve_ode
+from .ode_solver import odeint_wrapper
 from .utils import timeit,relative_error, absolute_error,,has_converged,benchmark,to_gpu_array,to_cpu_array,compile_function_from_string
 # __init__.py

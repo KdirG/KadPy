@@ -1,5 +1,28 @@
 # utils.py
 import time
+import cupy as cp
+import numpy as np
+
+def choose_backend(use_gpu=None):
+    """
+    Choose the backend for computation (CPU or GPU).
+    
+    Args:
+        use_gpu: Boolean to specify whether to use GPU (True) or CPU (False).
+    
+    Returns:
+        Backend module (NumPy for CPU or CuPy for GPU).
+    """
+    if use_gpu is None:
+        return np  # Default to CPU if no choice is provided
+    elif use_gpu:
+        try:
+            return cp  # Use cupy (GPU) if specified
+        except ImportError:
+            print("Warning: CuPy not available. Falling back to NumPy (CPU).")
+            return np
+    else:
+        return np  # Use numpy (CPU) if specified
 
 #measuring time
 def timeit(func):
@@ -23,7 +46,12 @@ def absolute_error(approx, exact): #defining and returning absolute error
 
 #convergence check
 def has_converged(old_val, new_val, tol=1e-6):
-    return abs(new_val - old_val) < tol
+    # Eğer değerler GPU (CuPy) üzerindeyse
+    if isinstance(old_val, cp.ndarray) or isinstance(new_val, cp.ndarray):
+        return float(cp.abs(new_val - old_val)) < tol
+    else:
+        # CPU (NumPy veya temel Python) değerleri için
+        return float(abs(new_val - old_val)) < tol
 
 #benchmark supporter => for gpu vs cpu comparation
 def benchmark(method, *args, repeats=5, **kwargs): #method=> function to measure *args=>positional argument which we send to the function example=>sum(arr) arr in there repeats=>how many measurements we need **kwargs=>keyword arguments which we send to the function
