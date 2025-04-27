@@ -1,8 +1,8 @@
 # root_finding.py
 import numpy as np
 import cupy as cp
-from utils import choose_backend
-from utils import has_converged
+from .utils import choose_backend
+from .utils import has_converged
 
 def bisection(func, a, b, tolerance=1e-6, max_iterations=100, use_gpu=None):
     """

@@ -37,8 +37,9 @@ def timeit(func):
 #error calculation    
 def relative_error(approx, exact): #defining and returning relative error #TEKRAR BAK 0/0 GİBİ DURUMLAR İÇİN
     try:
-    return abs((approx - exact) / exact)
-except ZeroDivisionError:
+        return abs((approx - exact) / exact)
+    except: 
+        ZeroDivisionError
     return float('inf')
 
 def absolute_error(approx, exact): #defining and returning absolute error 

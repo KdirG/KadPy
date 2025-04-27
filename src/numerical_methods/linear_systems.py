@@ -1,7 +1,7 @@
 #linear_systems.py
 import numpy as np
 import cupy as cp
-from utils import choose_backend
+from .utils import choose_backend
 from scipy.linalg import lu_factor, lu_solve
 
 

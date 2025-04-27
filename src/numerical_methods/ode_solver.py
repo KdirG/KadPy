@@ -2,7 +2,7 @@
 import numpy as np
 import cupy as cp
 from scipy.integrate import odeint
-from utils import choose_backend
+from .utils import choose_backend
 
 def odeint_wrapper(func, y0, t, use_gpu=None, args=(), method='BDF', atol=1e-6, rtol=1e-6, 
                   mxstep=500, h0=0.1, full_output=False, jacobian=None, **kwargs):

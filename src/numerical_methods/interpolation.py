@@ -1,29 +1,37 @@
 # interpolation.py
 import numpy as np
-from scipy.interpolate import CubicSpline,interp1d 
+from scipy.interpolate import CubicSpline, interp1d
 import matplotlib.pyplot as plt
+from .interpolation_gpu import gpu_linear_interpolation, gpu_cubic_spline_interpolation
+from .utils import choose_backend
 
-def linear_interpolation(x,y,x_new):
+def linear_interpolation(x, y, x_new, use_gpu=None):
     '''
-    Making  interpolation for x values with using scipy interpolate
+    Perform linear interpolation using either CPU or GPU implementation.
     
-    Arguments:x(array)=>Given x values(indexes)
-    y(array)=>Given y values(function values) 
-    x_new(array)=>new x values which we are going to interpolate 
+    Arguments:
+        x (array): Given x values (indices)
+        y (array): Given y values (function values) 
+        x_new (array): New x values to interpolate 
+        use_gpu (bool): Whether to use GPU acceleration (default: False)
     
-    Returns=>y_new=>  y values obtained with interpolation  
+    Returns:
+        array: Interpolated y values
     '''
-    #creating the interpolation function with scipy
-     interp_func = scipy.interpolate.interp1d(x, y, kind='linear', fill_value="extrapolate")
+    if use_gpu:
+        try:
+            return gpu_linear_interpolation(x, y, x_new)
+        except Exception as e:
+            print(f"GPU interpolation failed, falling back to CPU: {e}")
+            use_gpu = False
     
-    #interpolation for new x values
-    y_new = interp_func(x_new)
-    
-    return y_new
+    if not use_gpu:
+        interp_func = interp1d(x, y, kind='linear', fill_value="extrapolate")
+        y_new = interp_func(x_new)
+        return y_new
 
-    
- def spline_interpolation(x,y,x_new,bc_type):
-     """
+def spline_interpolation(x, y, x_new, bc_type, use_gpu=None):
+    """
     Perform cubic spline interpolation using SciPy's CubicSpline.
     
     Args:
@@ -38,16 +46,20 @@ def linear_interpolation(x,y,x_new):
     Returns:
         array: Interpolated y values at x_new points
     """
-     
-    # Create cubic spline interpolator
-     cs = CubicSpline(x, y, bc_type=bc_type)
-     
-     
-     # Evaluate at new points
-     y_new = cs(x_new)
-     
-     
-     return y_new
+    if use_gpu:
+        try:
+            return gpu_cubic_spline_interpolation(x, y, x_new)
+        except Exception as e:
+            print(f"GPU interpolation failed, falling back to CPU: {e}")
+            use_gpu = False
+    
+    if not use_gpu:
+        # Create cubic spline interpolator
+        cs = CubicSpline(x, y, bc_type=bc_type)
+        # Evaluate at new points
+        y_new = cs(x_new)
+        return y_new
+
      
      
     
