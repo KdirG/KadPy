@@ -11,38 +11,44 @@ def compute_derivative(data, dx=1.0, method='auto', use_gpu=False):
         dx: step size (default: 1.0)
         method: 'auto', 'forward', 'backward', 'central'
         use_gpu: True to use GPU-accelerated version if available
-
     Returns:
         Approximate derivative
     """
     if use_gpu:  # GPU integration
         return gradient_gpu(data, dx)
-
     if method == 'auto':
         return np.gradient(data, dx)
     elif method == 'forward':
-        return forward_diff(data, dx)  # forward differentiation method
+        return forward_diff(data, dx)
     elif method == 'backward':
-        return backward_diff(data, dx)  # backward differentiation method
+        return backward_diff(data, dx)
     elif method == 'central':
-        return central_diff(data, dx)  # central differentiation method
+        return central_diff(data, dx)
     else:
         raise ValueError("Invalid method. Choose 'auto', 'forward', 'backward', or 'central'.")
 
+def forward_diff(data, dx=1.0):
+    """Forward difference method for array data."""
+    result = np.zeros_like(data)
+    result[:-1] = (data[1:] - data[:-1]) / dx
+    result[-1] = result[-2]  # Handle boundary
+    return result
 
-def forward_diff(f, x, h):
-    """Forward difference method."""
-    return (f(x + h) - f(x)) / h
+def backward_diff(data, dx=1.0):
+    """Backward difference method for array data."""
+    result = np.zeros_like(data)
+    result[1:] = (data[1:] - data[:-1]) / dx
+    result[0] = result[1]  # Handle boundary
+    return result
 
-def backward_diff(f, x, h):
-    """Backward difference method."""
-    return (f(x) - f(x - h)) / h
+def central_diff(data, dx=1.0):
+    """Central difference method for array data."""
+    result = np.zeros_like(data)
+    result[1:-1] = (data[2:] - data[:-2]) / (2 * dx)
+    result[0] = (data[1] - data[0]) / dx  # Forward diff for first point
+    result[-1] = (data[-1] - data[-2]) / dx  # Backward diff for last point
+    return result
 
-def central_diff(fx, h):
-    """Central difference method."""
-    return (f(x + h) - f(x - h)) / (2 * h)
-
-        
 
 
     

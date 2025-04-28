@@ -55,15 +55,30 @@ def has_converged(old_val, new_val, tol=1e-6):
         return float(abs(new_val - old_val)) < tol
 
 #benchmark supporter => for gpu vs cpu comparation
-def benchmark(method, *args, repeats=5, **kwargs): #method=> function to measure *args=>positional argument which we send to the function example=>sum(arr) arr in there repeats=>how many measurements we need **kwargs=>keyword arguments which we send to the function
-    durations = [] #times added to the durations list 
-    for _ in range(repeats): #repeat as much as repeats count
-        start = time.perf_counter() #saving the start time
-        method(*args, **kwargs) #running the function
-        durations.append(time.perf_counter()  - start) 
-    avg_time = sum(durations) / repeats #calculating time average time
-    return avg_time #returning the average time
+def benchmark(method_func, *args, repeats=5, **kwargs): #method=> function to measure *args=>positional argument which we send to the function example=>sum(arr) arr in there repeats=>how many measurements we need **kwargs=>keyword arguments which we send to the function
+      # Initial call to validate (not timed)
+    # We do this outside the loop to handle any initial validation
+    method_func(*args, **kwargs)
+    
+    # Now time the method calls
+    durations = []
+    for _ in range(repeats):
+        start = time.perf_counter()
+        method(*args, **kwargs)
+        durations.append(time.perf_counter() - start)
+    
+    avg_time = sum(durations) / repeats
+    return avg_time
 
+def custom_benchmark(method, func, a, b, repeats=5, **kwargs): #custom benchmark for high polynominals root finding
+    """Custom benchmark that verifies sign change before each call."""
+    # Verify sign change
+    fa = func(a)
+    fb = func(b)
+    if fa * fb >= 0:
+        raise ValueError("Function values at interval endpoints must have opposite signs.")
+        
+        
 #numpy-cupy converter=> when we need a convertion for an array between numpy and cupy
 def to_gpu_array(arr): 
     try:

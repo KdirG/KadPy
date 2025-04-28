@@ -3,6 +3,8 @@ import cupy as cp
 
 
 
-def gradient_gpu(data, dx):
-    data = cp.asarray(data)
-    return cp.gradient(data, dx)
+def gradient_gpu(data, dx=1.0):
+    """GPU-accelerated gradient computation."""
+    data_gpu = cp.asarray(data)
+    result_gpu = cp.gradient(data_gpu, dx)
+    return cp.asnumpy(result_gpu)

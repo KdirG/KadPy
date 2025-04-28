@@ -34,44 +34,26 @@ def trapezoidal_integral(x, y, use_gpu=None):
     return trapezoid(y_arr, x_arr)
 
 def analytical_integral(func, a, b, use_gpu=False, num_points=1000):
-    """
-    Compute the definite integral of a function using numerical quadrature.
-    
-    Parameters:
-        func (callable): Function to integrate
-        a (float): Lower bound of integration
-        b (float): Upper bound of integration
-        use_gpu (bool): Whether to use GPU acceleration
-        num_points (int): Number of points for GPU integration
-
-    Returns:
-        tuple: (integral_value, absolute_error_estimate)
-        Note: Error estimate is approximate for GPU calculations
-    """
     if use_gpu:
         try:
             import cupy as cp
-            
-            # Create a grid of points for integration
             x = cp.linspace(a, b, num_points)
-            # Evaluate function at each point
-            y = cp.asarray([func(xi) for xi in x.get()])
             
-            # Use trapezoidal rule for integration
+            # Direct evaluation: func must handle cp.ndarray
+            y = func(x)
+
             integral = trapezoidal_integral(x, y, use_gpu=True)
-            
-            # Rough error estimate (proportional to step size squared)
             error_estimate = abs(integral) * ((b - a) / num_points)**2 / 12
-            
             return integral, error_estimate
-            
+
         except ImportError:
-            print("CuPy not available. Using CPU integration instead.")
+            print("CuPy not available. Falling back to CPU.")
             use_gpu = False
-    
+
     if not use_gpu:
-        # Use SciPy's quad for CPU integration
+        from scipy.integrate import quad
         return quad(func, a, b)
+
 
 
         
