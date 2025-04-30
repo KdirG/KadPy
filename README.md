@@ -1,24 +1,24 @@
-# README.md
-#Numerical Methods Library with GPU Acceleration
-This project is a Python library designed to provide a wide range of numerical methods, with CPU and GPU support. It includes methods for root finding, optimization, differentiation, integration, interpolation, and solving ordinary differential equations (ODEs). By leveraging both CPU (via NumPy) and GPU (via CuPy), the library aims to deliver optimized performance for large-scale computations.
+# GPUPy 🚀
 
-Features
-Root Finding: Methods like Newton-Raphson, Bisection.
+**GPUPy** is a high-performance Python library for numerical methods, offering seamless support for both CPU and GPU computations. It is designed for students, researchers, and engineers who need efficient and scalable numerical tools for scientific computing.
 
-Optimization: Implementations of Gradient Descent, Golden-Section, and others with CPU and GPU support.
+## ✨ Features
 
-Differentiation: Forward, Backward, and Central Difference methods for numerical differentiation.
+- ✅ CPU (NumPy) and GPU (CuPy) support with automatic backend switching
+- 🔁 Root Finding Methods (e.g. Bisection, Newton-Raphson)
+- 🔬 Differentiation Techniques (Forward, Backward, Central Differences)
+- ∫ Integration Methods (Trapezoidal, Analytical)
+- 📈 Interpolation (Linear and Cubic Spline with GPU versions)
+- 🔄 Linear System Solvers (Direct methods, LU Decomposition)
+- 🧠 Optimization wrappers (using SciPy)
+- 🧮 ODE Solvers (via `scipy.integrate`)
+- ⏱ Benchmarking utilities for performance comparison
+- 📊 Built-in plotting support for interpolations and function visuals
 
-Integration: Trapezoidal and Simpson's Rule for numerical integration.
+## 🔧 Installation
 
-Interpolation: Linear, Lagrange, and Cubic Spline interpolation.
+Clone the repository:
 
-ODE Solvers: Euler and Runge-Kutta methods for solving ordinary differential equations.
-
-GPU Acceleration
-The library utilizes CuPy to accelerate calculations on compatible GPUs. For operations on the CPU, it uses NumPy. Users can choose to run methods on the GPU, with automatic fallback to CPU if a GPU is unavailable.
-
-Installation
-To install the library, clone the repository and install the required dependencies:
-git clone https://github.com/KdirG/GPUPy.git
+```bash
+git clone https://github.com/yourusername/GPUPy.git
 cd GPUPy
