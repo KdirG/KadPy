@@ -23,21 +23,15 @@ Clone the repository:
 git clone https://github.com/yourusername/GPUPy.git
 cd GPUPy
 Install required dependencies:
-
-bash
-Kopyala
-Düzenle
 pip install -r requirements.txt
-💡 Make sure you have a compatible CUDA-enabled GPU and cupy installed to use GPU features:
 
-bash
-Kopyala
-Düzenle
+
+💡 Make sure you have a compatible CUDA-enabled GPU and cupy installed to use GPU features:
 pip install cupy
+
+
 📁 Project Structure
-css
-Kopyala
-Düzenle
+
 GPUPy/
 ├── GPUPy/
 │   └── src/
@@ -58,10 +52,9 @@ GPUPy/
 │
 ├── README.md
 └── requirements.txt
-🚀 Usage Example
-python
-Kopyala
-Düzenle
+
+Usage Example
+
 import GPUPy as gp
 
 def f(x): return x**2 - 4
@@ -75,10 +68,9 @@ root_gpu = gp.newton_raphson(f, df, x0=3, use_gpu=True)
 
 print("Root (CPU):", root)
 print("Root (GPU):", root_gpu)
-📊 Benchmark Example
-python
-Kopyala
-Düzenle
+
+ Benchmark Example
+
 from GPUPy.src.numerical_methods.utils import benchmark
 from GPUPy import bisection
 
