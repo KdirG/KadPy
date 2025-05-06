@@ -31,7 +31,7 @@ pip install cupy
 
 
 📁 Project Structure
-
+'''
 GPUPy/
 ├── GPUPy/
 │   └── src/
@@ -52,7 +52,7 @@ GPUPy/
 │
 ├── README.md
 └── requirements.txt
-
+'''
 Usage Example
 
 import GPUPy as gp
