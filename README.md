@@ -15,7 +15,7 @@
 - ⏱ Benchmarking utilities for performance comparison
 - 📊 Built-in plotting support for interpolations and function visuals
 
-## 🔧 Installation
+ 🔧 Installation
 
 Clone the repository:
 
