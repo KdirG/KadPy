@@ -19,7 +19,7 @@
 
 Clone the repository:
 
-
+'''bash
 git clone https://github.com/yourusername/GPUPy.git
 cd GPUPy
 Install required dependencies:
@@ -31,7 +31,7 @@ pip install cupy
 
 
 📁 Project Structure
-'''
+'''bash
 GPUPy/
 ├── GPUPy/
 │   └── src/
