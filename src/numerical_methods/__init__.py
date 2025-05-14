@@ -1,3 +1,7 @@
+"""
+Numerical methods implementations for GPUPy
+"""
+
 from .core import *
 from .utils import *
 from .root_finding import *

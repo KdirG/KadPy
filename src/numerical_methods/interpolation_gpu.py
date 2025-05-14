@@ -3,19 +3,19 @@ import cupy as cp
 
 def gpu_linear_interpolation(x, y, x_new):
     """
-    GPU üzerinde çalışan doğrusal interpolasyon fonksiyonu
+    Linear interpolation function running on GPU
     """
-    # Girdi verilerini GPU'ya taşı
+    # Move input data to GPU
     x_gpu = cp.asarray(x)
     y_gpu = cp.asarray(y)
     x_new_gpu = cp.asarray(x_new)
     
-    # Sonuçları saklamak için dizi oluştur
+    # Create array to store results
     y_new = cp.zeros_like(x_new_gpu)
     
-    # Her bir x_new noktası için interpolasyon yap
+    # Perform interpolation for each x_new point
     for i, x_point in enumerate(x_new_gpu):
-        # Doğrusal interpolasyon için yakın noktaları bul
+        # Find the nearest points for linear interpolation
         mask = x_gpu <= x_point
         if not cp.any(mask):
             i0 = 0
@@ -28,31 +28,31 @@ def gpu_linear_interpolation(x, y, x_new):
         
         i1 = i0 + 1
         
-        # Doğrusal interpolasyon formülü
+        # Linear interpolation formula
         x0, x1 = x_gpu[i0], x_gpu[i1]
         y0, y1 = y_gpu[i0], y_gpu[i1]
         
         y_new[i] = y0 + (x_point - x0) * (y1 - y0) / (x1 - x0)
     
-    # Sonucu geri döndür
+    # Return result
     return y_new
 
 def gpu_cubic_spline_interpolation(x, y, x_new):
     """
-    GPU üzerinde çalışan kübik spline interpolasyon fonksiyonu
+    Cubic spline interpolation function running on GPU
     """
-    # Veriyi CPU'da hazırla
+    # Prepare data on CPU
     from scipy.interpolate import CubicSpline
     cs = CubicSpline(x, y)
     
-    # Katsayıları al
+    # Get coefficients
     c0 = cs.c[0]
     c1 = cs.c[1]
     c2 = cs.c[2]
     c3 = cs.c[3]
     knots = cs.x
     
-    # Katsayıları GPU'ya taşı
+    # Move coefficients to GPU
     c0_gpu = cp.asarray(c0)
     c1_gpu = cp.asarray(c1)
     c2_gpu = cp.asarray(c2)
@@ -60,12 +60,12 @@ def gpu_cubic_spline_interpolation(x, y, x_new):
     knots_gpu = cp.asarray(knots)
     x_new_gpu = cp.asarray(x_new)
     
-    # Sonuçları saklamak için dizi oluştur
+    # Create array to store results
     y_new = cp.zeros_like(x_new_gpu)
     
-    # Her bir x_new noktası için spline değerini hesapla
+    # Compute spline value for each x_new point
     for i, x_point in enumerate(x_new_gpu):
-        # x_point'in hangi aralıkta olduğunu bul
+        # Find the interval in which x_point lies
         mask = knots_gpu <= x_point
         if not cp.any(mask):
             idx = 0
@@ -75,26 +75,26 @@ def gpu_cubic_spline_interpolation(x, y, x_new):
         if idx >= len(knots_gpu) - 1:
             idx = len(knots_gpu) - 2
         
-        # Normalize edilmiş x değeri
+        # Normalized x value
         dx = x_point - knots_gpu[idx]
         
-        # Kübik polinom değerini hesapla
+        # Evaluate cubic polynomial
         y_new[i] = c3_gpu[idx] + dx * (c2_gpu[idx] + dx * (c1_gpu[idx] + dx * c0_gpu[idx]))
     
     return y_new
 
-# Daha verimli alternatif (linear interpolasyon için)
+# More efficient alternative (for linear interpolation)
 def gpu_linear_interpolation_vectorized(x, y, x_new):
     """
-    GPU üzerinde çalışan daha verimli doğrusal interpolasyon fonksiyonu
-    Vektörel işlemler kullanarak daha hızlı çalışır
+    More efficient linear interpolation function running on GPU
+    Uses vectorized operations for faster performance
     """
-    # Girdi verilerini GPU'ya taşı
+    # Move input data to GPU
     x_gpu = cp.asarray(x)
     y_gpu = cp.asarray(y)
     x_new_gpu = cp.asarray(x_new)
     
-    # Her x_new değeri için, x_gpu içindeki konumunu bul
+    # For each x_new value, find its position in x_gpu
     indices = cp.zeros(len(x_new_gpu), dtype=int)
     
     for i, x_val in enumerate(x_new_gpu):
@@ -104,10 +104,10 @@ def gpu_linear_interpolation_vectorized(x, y, x_new):
         else:
             indices[i] = cp.where(mask)[0][-1]
     
-    # Sınır kontrolü
+    # Boundary check
     valid_mask = indices < len(x_gpu) - 1
     
-    # Geçerli indeks değerleri için interpolasyon hesapla
+    # Compute interpolation for valid index values
     i0 = indices[valid_mask]
     i1 = i0 + 1
     
@@ -116,18 +116,18 @@ def gpu_linear_interpolation_vectorized(x, y, x_new):
     y0 = y_gpu[i0]
     y1 = y_gpu[i1]
     
-    # Doğru x_new değerlerini seç
+    # Select correct x_new values
     x_points = x_new_gpu[valid_mask]
     
-    # Sonuç dizisi oluştur
+    # Create result array
     y_new = cp.zeros_like(x_new_gpu)
     
-    # Sondaki değerler için i0 = len(x_gpu) - 1 olan durumları ele al
+    # Handle cases where i0 = len(x_gpu) - 1
     edge_mask = ~valid_mask
     if cp.any(edge_mask):
         y_new[edge_mask] = y_gpu[-1]
     
-    # Interpolasyon hesapla
+    # Perform interpolation
     y_new[valid_mask] = y0 + (x_points - x0) * (y1 - y0) / (x1 - x0)
     
     return y_new

@@ -57,7 +57,7 @@ def solve_linear_system_lu(A, b, use_gpu=None):
 
         return cp.asnumpy(x_gpu)  # convert back to NumPy
     else:
-        # CPU çözümü
+        # CPU solution
         A_cpu = np.asarray(A)
         b_cpu = np.asarray(b)
         lu, piv = lu_factor(A_cpu)

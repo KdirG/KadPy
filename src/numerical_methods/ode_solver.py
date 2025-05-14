@@ -36,6 +36,15 @@ def odeint_wrapper(func, y0, t, use_gpu=None, args=(), method='BDF', atol=1e-6, 
         y0_gpu = cp.asarray(y0, dtype=np.float64)
         t_gpu = cp.asarray(t, dtype=np.float64)
         
+        # Convert args to GPU arrays if they are numpy arrays
+        args_gpu = []
+        for arg in args:
+            if isinstance(arg, np.ndarray):
+                args_gpu.append(cp.asarray(arg))
+            else:
+                args_gpu.append(arg)
+        args_gpu = tuple(args_gpu)
+        
         # Setup GPU functions
         def gpu_func(y, t, *args_gpu):
             # Function should handle CuPy arrays
@@ -43,7 +52,7 @@ def odeint_wrapper(func, y0, t, use_gpu=None, args=(), method='BDF', atol=1e-6, 
         
         # Initialize result array
         n_dim = len(y0)
-        y_result = cp.zeros((len(t), n_dim), dtype=y0_gpu.dtype)
+        y_result = cp.zeros((len(t_gpu), n_dim), dtype=y0_gpu.dtype)
         y_result[0] = y0_gpu
         
         if method.upper() == 'BDF':
@@ -71,7 +80,7 @@ def odeint_wrapper(func, y0, t, use_gpu=None, args=(), method='BDF', atol=1e-6, 
                     return jac
             
             # BDF1 (backward Euler) implementation
-            for i in range(1, len(t)):
+            for i in range(1, len(t_gpu)):
                 # Current step size
                 step = dt[i-1]
                 
@@ -84,7 +93,7 @@ def odeint_wrapper(func, y0, t, use_gpu=None, args=(), method='BDF', atol=1e-6, 
                 # Newton iteration to solve implicit equation
                 for newton_iter in range(10):  # Max 10 Newton iterations
                     # Compute residual: y_next - y_prev - h*f(y_next, t_next)
-                    f_next = gpu_func(y_next, t_gpu[i], *args)
+                    f_next = gpu_func(y_next, t_gpu[i], *args_gpu)
                     residual = y_next - y_prev - step * f_next
                     
                     # Check convergence
@@ -92,7 +101,7 @@ def odeint_wrapper(func, y0, t, use_gpu=None, args=(), method='BDF', atol=1e-6, 
                         break
                     
                     # Compute Jacobian: I - h*df/dy
-                    jac = gpu_jacobian(y_next, t_gpu[i], *args)
+                    jac = gpu_jacobian(y_next, t_gpu[i], *args_gpu)
                     jac_system = cp.eye(n_dim) - step * jac
                     
                     # Solve linear system using cuSolver
@@ -106,16 +115,16 @@ def odeint_wrapper(func, y0, t, use_gpu=None, args=(), method='BDF', atol=1e-6, 
                 
         elif method.upper() == 'RK45':
             # Runge-Kutta 4th order method
-            for i in range(1, len(t)):
-                h = t[i] - t[i-1]
+            for i in range(1, len(t_gpu)):
+                h = t_gpu[i] - t_gpu[i-1]
                 yi = y_result[i-1]
-                ti = t[i-1]
+                ti = t_gpu[i-1]
                 
                 # RK4 steps
-                k1 = gpu_func(yi, ti, *args)
-                k2 = gpu_func(yi + h/2 * k1, ti + h/2, *args)
-                k3 = gpu_func(yi + h/2 * k2, ti + h/2, *args)
-                k4 = gpu_func(yi + h * k3, ti + h, *args)
+                k1 = gpu_func(yi, ti, *args_gpu)
+                k2 = gpu_func(yi + h/2 * k1, ti + h/2, *args_gpu)
+                k3 = gpu_func(yi + h/2 * k2, ti + h/2, *args_gpu)
+                k4 = gpu_func(yi + h * k3, ti + h, *args_gpu)
                 
                 y_result[i] = yi + h/6 * (k1 + 2*k2 + 2*k3 + k4)
         
@@ -127,7 +136,7 @@ def odeint_wrapper(func, y0, t, use_gpu=None, args=(), method='BDF', atol=1e-6, 
             info_dict = {
                 'message': f'GPU-accelerated {method} method',
                 'nst': len(t)-1,
-                'nfe': len(t)-1 * (4 if method.upper() == 'RK45' else 10), 
+                'nfe': (len(t)-1) * (4 if method.upper() == 'RK45' else 10), 
                 'success': True
             }
             return result, info_dict

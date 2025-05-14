@@ -102,7 +102,7 @@ def newton_raphson(f, df, x0, tol=1e-6, max_iter=100, use_gpu=None):
     
     raise ValueError(f"Newton-Raphson did not converge after {max_iter} iterations.")
 
-
+'''
 # Example usage
 if __name__ == "__main__":
     # Define functions compatible with both NumPy and CuPy
@@ -133,3 +133,4 @@ if __name__ == "__main__":
         print(f"Root found with GPU Newton-Raphson: {root_newton_gpu}")
     except Exception as e:
         print(f"GPU computation failed: {e}")
+'''
