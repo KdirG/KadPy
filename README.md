@@ -15,23 +15,26 @@
 - ⏱ Benchmarking utilities for performance comparison
 - 📊 Built-in plotting support for interpolations and function visuals
 
-## 🔧 Installation
+ 🔧 Installation
 
 Clone the repository:
 
-```bash
+
+
+```
 git clone https://github.com/yourusername/GPUPy.git
 cd GPUPy
 Install required dependencies:
 pip install -r requirements.txt
-
+```
 
 💡 Make sure you have a compatible CUDA-enabled GPU and cupy installed to use GPU features:
+```
 pip install cupy
-
+```
 
 📁 Project Structure
-
+```
 GPUPy/
 ├── GPUPy/
 │   └── src/
@@ -52,9 +55,9 @@ GPUPy/
 │
 ├── README.md
 └── requirements.txt
-
+```
 Usage Example
-
+```
 import GPUPy as gp
 
 def f(x): return x**2 - 4
@@ -68,9 +71,9 @@ root_gpu = gp.newton_raphson(f, df, x0=3, use_gpu=True)
 
 print("Root (CPU):", root)
 print("Root (GPU):", root_gpu)
-
+```
  Benchmark Example
-
+```
 from GPUPy.src.numerical_methods.utils import benchmark
 from GPUPy import bisection
 
@@ -80,6 +83,7 @@ cpu_time = benchmark(bisection, f, a=0, b=5, use_gpu=False)
 gpu_time = benchmark(bisection, f, a=0, b=5, use_gpu=True)
 
 print(f"CPU: {cpu_time:.6f}s | GPU: {gpu_time:.6f}s")
+```
 🤝 Contributing
 Pull requests are welcome! If you want to contribute:
 
