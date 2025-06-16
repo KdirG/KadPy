@@ -1,17 +1,16 @@
 Metadata-Version: 2.4
 Name: GPUPy
-Version: 0.1.0
+Version: 0.1.1
 Summary: GPU Accelerated Numerical Methods Library
-Home-page: https://github.com/kullanici_adiniz/GPUPy
-Author: Adınız Soyadınız
-Author-email: email@example.com
-Project-URL: Bug Tracker, https://github.com/kullanici_adiniz/GPUPy/issues
+Home-page: https://github.com/KdirG/GPUPy
+Author: Kadir Göçer
+Author-email: kadirgocer02@outlook.com
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
 Classifier: Intended Audience :: Science/Research
 Classifier: Topic :: Scientific/Engineering :: Mathematics
-Requires-Python: >=3.13.3
+Requires-Python: >=3.10
 Description-Content-Type: text/markdown
 Requires-Dist: numpy>=1.20.0
 Requires-Dist: scipy>=1.7.0
@@ -24,7 +23,6 @@ Dynamic: classifier
 Dynamic: description
 Dynamic: description-content-type
 Dynamic: home-page
-Dynamic: project-url
 Dynamic: provides-extra
 Dynamic: requires-dist
 Dynamic: requires-python
@@ -47,23 +45,26 @@ Dynamic: summary
 - ⏱ Benchmarking utilities for performance comparison
 - 📊 Built-in plotting support for interpolations and function visuals
 
-## 🔧 Installation
+ 🔧 Installation
 
 Clone the repository:
 
-```bash
+
+
+```
 git clone https://github.com/yourusername/GPUPy.git
 cd GPUPy
 Install required dependencies:
 pip install -r requirements.txt
-
+```
 
 💡 Make sure you have a compatible CUDA-enabled GPU and cupy installed to use GPU features:
+```
 pip install cupy
-
+```
 
 📁 Project Structure
-
+```
 GPUPy/
 ├── GPUPy/
 │   └── src/
@@ -84,9 +85,9 @@ GPUPy/
 │
 ├── README.md
 └── requirements.txt
-
+```
 Usage Example
-
+```
 import GPUPy as gp
 
 def f(x): return x**2 - 4
@@ -100,9 +101,9 @@ root_gpu = gp.newton_raphson(f, df, x0=3, use_gpu=True)
 
 print("Root (CPU):", root)
 print("Root (GPU):", root_gpu)
-
+```
  Benchmark Example
-
+```
 from GPUPy.src.numerical_methods.utils import benchmark
 from GPUPy import bisection
 
@@ -112,6 +113,7 @@ cpu_time = benchmark(bisection, f, a=0, b=5, use_gpu=False)
 gpu_time = benchmark(bisection, f, a=0, b=5, use_gpu=True)
 
 print(f"CPU: {cpu_time:.6f}s | GPU: {gpu_time:.6f}s")
+```
 🤝 Contributing
 Pull requests are welcome! If you want to contribute:
 
